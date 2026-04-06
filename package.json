@@ -4,6 +4,11 @@
   "description": "Create a new MCP server project with Bun and TypeScript",
   "author": "Vladimir Kraikovskii (https://github.com/krowten)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krowten/create-bun-mcp.git"
+  },
+  "homepage": "https://github.com/krowten/create-bun-mcp#readme",
   "keywords": [
     "mcp",
     "mcp-server",
