@@ -1,0 +1,38 @@
+# Stages a release on npm when a `v*` tag is pushed; the maintainer then approves it on npmjs.com
+# (Staged Packages) with 2FA, so nothing goes live from CI alone. Provenance is signed here: only a
+# CI run of a public repository can produce it.
+#
+# Authentication is trusted publishing (OIDC, stage only), configured for this repository and
+# workflow file on npmjs.com; there is no npm token.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write # signs the provenance statement, and authenticates trusted publishing
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      # Node 24 ships an npm with `npm stage` (>= 11.15)
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      # The tag is the trigger, not the version: npm publishes whatever package.json says. Refuse
+      # a mismatch instead of staging a number nobody meant.
+      - name: Check the tag matches package.json
+        run: test "v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
+      - run: bun install --frozen-lockfile
+      # prepublishOnly runs lint, format check, typecheck and the full test suite: the tag may
+      # point at a commit CI never ran on
+      - run: npm stage publish --provenance --access public

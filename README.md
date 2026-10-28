@@ -6,9 +6,11 @@ A modern, fast [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) 
 
 - **Built with Bun**: High performance, fast startup, and native TypeScript support
 - **Official MCP SDK**: Uses `@modelcontextprotocol/server`
+- **Latest protocol**: Speaks MCP revision `2026-07-28` and still serves 2025-era clients
 - **TypeScript First**: Simple setup for modern Bun development
 - **Code Quality**: Pre-configured with ESLint and Prettier
-- **Transport Support**: Supports both **stdio** and **HTTP** transports
+- **Transport Support**: Supports both **stdio** and stateless **Streamable HTTP** transports
+- **Tested**: Ships with `bun test` tests that drive the server through a real MCP client
 - **Clean Structure**: Separation between server logic, tools, and transport entry points
 
 ## Why Bun?
@@ -28,7 +30,9 @@ src/
   index.ts       # stdio transport entrypoint
   http.ts        # HTTP transport entrypoint
   server.ts      # core server logic
+  server.test.ts # tests over stdio and HTTP
   tools/
+    index.ts     # registers all tools
     common.ts    # sample tool
 ```
 
@@ -46,11 +50,11 @@ You can create a new MCP server project instantly using `bunx`:
 bunx create-bun-mcp my-mcp
 ```
 
-This will create a new directory, copy the boilerplate, and install all dependencies automatically.
+This will create a new directory, copy the boilerplate, and install all dependencies automatically. Pass `--no-install` to skip the install step.
 
 ### Integration with Claude CLI (Claude Code)
 
-To use your new server with [Claude CLI](https://github.com/anthropic-ai/claude-code), add it to your `.mcp.json` or `.claude/settings.json` file in your project root.
+To use your new server with [Claude CLI](https://github.com/anthropics/claude-code), add it to your `.mcp.json` or `.claude/settings.json` file in your project root.
 
 **Pro-tip:** For stable relative path resolution in Claude Code, always use `bun run` and start your path with `./`.
 
@@ -96,6 +100,15 @@ Default HTTP endpoint:
 http://localhost:3000/mcp
 ```
 
+The HTTP server is stateless: every request is served by a fresh server instance, as the `2026-07-28` revision expects. Requests with a browser `Origin` other than localhost are rejected to prevent DNS rebinding; add your origins in `src/http.ts` before exposing the server to browsers.
+
+### Tests and type checking
+
+```bash
+bun test
+bun run check
+```
+
 ## MCP Inspector
 
 ### Inspect stdio
@@ -118,10 +131,7 @@ bun run dev:http
 bun run inspect:http
 ```
 
-3. In UI:
-
-- Select **Streamable HTTP**
-- Use URL: `http://localhost:3000/mcp`
+Both scripts open the Inspector web UI already connected to your server over the `2026-07-28` protocol revision.
 
 ## Adding Tools
 
@@ -130,7 +140,8 @@ Create a new file in `src/tools/` and register your tools:
 ```typescript
 // src/tools/my-tools.ts
 import type { McpServer } from '@modelcontextprotocol/server'
-import * as z from 'zod/v4'
+
+import * as z from 'zod'
 
 export default function (server: McpServer) {
   server.registerTool(
@@ -155,6 +166,7 @@ Then register it in `src/tools/index.ts`:
 
 ```typescript
 import type { McpServer } from '@modelcontextprotocol/server'
+
 import commonTools from './common'
 import myTools from './my-tools'
 
@@ -166,8 +178,8 @@ export default function (server: McpServer) {
 
 ## Environment Variables
 
-| Variable | Default | Description |
-| -------- | ------- | ----------- |
+| Variable | Default | Description                              |
+| -------- | ------- | ---------------------------------------- |
 | `PORT`   | `3000`  | HTTP server port (used by `src/http.ts`) |
 
 Bun reads environment variables from `.env`, but:
@@ -194,4 +206,4 @@ MCP uses **stdout** for protocol messages, so writing logs to stdout can break c
 
 ## License
 
-MIT
+MIT © Vladimir Kraikovskii

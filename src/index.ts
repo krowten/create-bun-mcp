@@ -1,9 +1,6 @@
-import { StdioServerTransport } from '@modelcontextprotocol/server'
+import { serveStdio } from '@modelcontextprotocol/server/stdio'
 
 import { createServer } from './server'
 
-const server = createServer()
-
-const transport = new StdioServerTransport()
-
-await server.connect(transport)
+// Serves both the 2026-07-28 revision and 2025-era clients that open with `initialize`
+serveStdio(createServer)

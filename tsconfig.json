@@ -16,5 +16,5 @@
     "allowJs": true,
     "types": ["bun", "node"]
   },
-  "include": ["src/**/*", "bin/**/*", "eslint.config.mjs"]
+  "include": ["src/**/*", "bin/**/*", "test/**/*", "eslint.config.mjs"]
 }

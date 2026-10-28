@@ -1,5 +1,6 @@
 import type { McpServer } from '@modelcontextprotocol/server'
-import * as z from 'zod/v4'
+
+import * as z from 'zod'
 
 export default function (server: McpServer) {
   server.registerTool(
@@ -10,16 +11,10 @@ export default function (server: McpServer) {
       inputSchema: z.object({
         word: z.string(),
       }),
+      annotations: { readOnlyHint: true },
     },
-    async ({ word }) => {
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `pong ${word}`,
-          },
-        ],
-      }
-    },
+    async ({ word }) => ({
+      content: [{ type: 'text', text: `pong ${word}` }],
+    }),
   )
 }

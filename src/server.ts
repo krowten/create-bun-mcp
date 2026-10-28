@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/server'
-import tools from './tools'
+
+import registerTools from './tools'
 
 export function createServer() {
   const server = new McpServer({
@@ -7,7 +8,7 @@ export function createServer() {
     version: '1.0.0',
   })
 
-  tools(server)
+  registerTools(server)
 
   return server
 }
