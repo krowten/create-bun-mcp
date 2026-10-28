@@ -38,7 +38,7 @@ try {
   })
   if (existing.length > 0) throw new Error(`Directory "${targetDir}" already exists and is not empty.`)
 
-  // Copy exactly what npm publishes, so a local run produces the same project as `bunx create-bun-mcp`
+  // Copy exactly what npm publishes, so a local run produces the same project as `bun create bun-mcp`
   for (const entry of templatePkg.files as string[]) {
     if (entry === 'bin') continue
     await cp(join(templateRoot, entry), join(resolvedTargetDir, entry), { recursive: true })

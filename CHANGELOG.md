@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+- README: create a project with `bun create bun-mcp`.
+
 ## 1.1.0
 
 - The template speaks MCP protocol revision `2026-07-28` on stdio and HTTP and still serves 2025-era clients.

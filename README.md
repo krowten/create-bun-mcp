@@ -44,10 +44,10 @@ src/
 
 ### Usage (Quick Start)
 
-You can create a new MCP server project instantly using `bunx`:
+You can create a new MCP server project instantly with `bun create`:
 
 ```bash
-bunx create-bun-mcp my-mcp
+bun create bun-mcp my-mcp
 ```
 
 This will create a new directory, copy the boilerplate, and install all dependencies automatically. Pass `--no-install` to skip the install step.

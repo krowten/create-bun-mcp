@@ -1,6 +1,6 @@
 {
   "name": "create-bun-mcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Create a new MCP server project with Bun and TypeScript",
   "author": {
     "name": "krowten",
